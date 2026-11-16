@@ -2,6 +2,20 @@
   "houses": [
     {
       "baths": 2,
+      "price": 13500000,
+      "zone": "brentwood",
+      "time": "4:00",
+      "featured": false,
+      "date": "2026-11-16",
+      "beds": 2,
+      "address": "4720 lougheed hwy",
+      "type": "Condo",
+      "id": "776128",
+      "image": "/images/uploads/image-2026-10-10-at-1.18 pm.jpg",
+      "description": "ftfftogyg"
+    },
+    {
+      "baths": 2,
       "price": 1189000,
       "zone": "West End",
       "time": "2:00 PM – 4:00 PM",
@@ -111,20 +125,6 @@
       "id": "oh-006",
       "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80",
       "description": "Architect-designed North Shore home with expansive glass, a cedar-clad exterior and a private backyard backing onto green space. Radiant heating, a media room and a three-minute drive to Lonsdale Quay.\n\nPrivate showings available by appointment."
-    },
-    {
-      "baths": 2,
-      "price": 13500000,
-      "zone": "brentwood",
-      "time": "4:00",
-      "featured": false,
-      "date": "2026-11-16",
-      "beds": 2,
-      "address": "4720 lougheed hwy",
-      "type": "Condo",
-      "id": "776128",
-      "image": "/images/uploads/image-2026-10-10-at-1.18 pm.jpg",
-      "description": "ftfftogyg"
     }
   ]
 }
