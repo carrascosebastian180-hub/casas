@@ -1,0 +1,4 @@
+# Minimal Netlify config for a pure static site.
+# No build command: Netlify just publishes the files in the repo root.
+[build]
+  publish = "."

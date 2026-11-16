@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex Moreno | Open Houses in Vancouver</title>
+  <meta name="description" content="Browse upcoming open houses and featured properties in Vancouver. Register online and tour your next home with Alex Moreno." />
+
+  <!-- Font: Manrope -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS (CDN, no build step) + custom palette -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        fontFamily: { sans: ['Manrope', 'system-ui', 'sans-serif'] },
+        colors: { ink: '#161412', stone: '#f3efe8', sand: '#d9c8a9', pine: '#2f4a40' }
+      } }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+    :focus-visible { outline: 2px solid #d9c8a9; outline-offset: 2px; }
+    body.modal-open { overflow: hidden; }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    .rise { animation: rise .25s ease-out; }
+  </style>
+  <!-- Netlify Identity (lets CMS invite/login links work) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+
+<body class="bg-stone font-sans text-ink antialiased">
+
+  <!-- ============ HEADER: fixed dark navigation ============ -->
+  <header class="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-ink">
+    <nav class="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8" aria-label="Main">
+      <a href="#home" class="text-lg font-semibold tracking-wide text-white">Alex Moreno <span class="font-light text-sand">Real Estate</span></a>
+      <ul class="flex items-center gap-4 text-xs text-white/80 sm:gap-9 sm:text-sm">
+        <li><a class="transition-colors hover:text-white" href="#open-houses">Open Houses</a></li>
+        <li><a class="transition-colors hover:text-white" href="#featured">Featured Properties</a></li>
+        <li><a class="transition-colors hover:text-white" href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section id="home" class="relative flex min-h-[88vh] items-center bg-ink pt-[72px]">
+      <img src="https://images.unsplash.com/photo-1559511260-66a654ae982a?auto=format&fit=crop&w=2000&q=80"
+           alt="Aerial view of downtown Vancouver at sunset" class="absolute inset-0 h-full w-full object-cover" onerror="this.style.display='none'" />
+      <div class="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/55 to-ink/85"></div>
+
+      <div class="relative mx-auto w-full max-w-7xl px-5 pb-40 pt-16 sm:px-8">
+        <h1 class="max-w-3xl text-4xl font-light leading-[1.1] text-white sm:text-6xl">
+          Find Your Next <span class="font-semibold">Open House</span> in Vancouver
+        </h1>
+        <p class="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+          Tour homes and condos with no pressure. Browse the weekend schedule and register in under a minute.
+        </p>
+      </div>
+
+      <!-- Interactive filter bar -->
+      <form id="search-form" class="absolute inset-x-0 bottom-0 translate-y-1/2 px-5 sm:px-8" aria-label="Filter open houses">
+        <div class="mx-auto grid max-w-5xl grid-cols-1 gap-px overflow-hidden rounded-3xl bg-ink/10 shadow-2xl ring-1 ring-black/5 sm:grid-cols-[1fr_1fr_1fr_auto] sm:rounded-full">
+          <label class="bg-white px-6 py-3.5">
+            <span class="block text-xs text-ink/55">Area</span>
+            <select id="f-zone" class="w-full bg-transparent text-sm font-medium outline-none"><option value="">All areas</option></select>
+          </label>
+          <label class="bg-white px-6 py-3.5">
+            <span class="block text-xs text-ink/55">Property type</span>
+            <select id="f-type" class="w-full bg-transparent text-sm font-medium outline-none">
+              <option value="">All types</option><option>Home</option><option>Condo</option><option>Townhouse</option>
+            </select>
+          </label>
+          <label class="bg-white px-6 py-3.5">
+            <span class="block text-xs text-ink/55">Max price</span>
+            <select id="f-price" class="w-full bg-transparent text-sm font-medium outline-none">
+              <option value="">No limit</option>
+              <option value="1000000">Up to $1,000,000</option>
+              <option value="1500000">Up to $1,500,000</option>
+              <option value="2500000">Up to $2,500,000</option>
+              <option value="5000000">Up to $5,000,000</option>
+            </select>
+          </label>
+          <div class="flex items-center justify-center bg-white p-3">
+            <button type="submit" aria-label="Search open houses" class="flex h-14 w-14 items-center justify-center rounded-full bg-ink text-white transition hover:bg-pine">
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6"/></svg>
+            </button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ OPEN HOUSES (loaded from houses.json) ============ -->
+    <section id="open-houses" class="mx-auto max-w-7xl px-5 pb-20 pt-40 sm:px-8 sm:pt-36">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <h2 class="text-3xl font-semibold sm:text-4xl">Upcoming Open Houses</h2>
+        <p id="results-count" class="text-sm text-ink/60" aria-live="polite"></p>
+      </div>
+      <div id="oh-grid" class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <p class="col-span-full text-ink/60">Loading properties…</p>
+      </div>
+    </section>
+
+    <!-- ============ FEATURED PROPERTIES ============ -->
+    <section id="featured" class="bg-white py-20">
+      <div class="mx-auto max-w-7xl px-5 sm:px-8">
+        <h2 class="text-3xl font-semibold sm:text-4xl">Featured Properties</h2>
+        <p class="mt-3 max-w-xl text-ink/65">Hand-picked listings. Open a property to see photos, details and showing options.</p>
+        <div id="featured-grid" class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER: contact + weekly alerts ============ -->
+  <footer id="contact" class="bg-ink text-white/80">
+    <div class="mx-auto grid max-w-7xl gap-14 px-5 py-20 sm:px-8 lg:grid-cols-2">
+      <div>
+        <h2 class="text-3xl font-semibold text-white">Get new open houses every week</h2>
+        <p class="mt-3 max-w-md text-white/65">Every Friday we email the weekend's open houses. No spam, unsubscribe anytime.</p>
+
+        <!-- Netlify form: newsletter-alertas -->
+        <form name="newsletter-alertas" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="newsletter-form" class="mt-8 flex max-w-md flex-col gap-3 sm:flex-row">
+          <input type="hidden" name="form-name" value="newsletter-alertas" />
+          <p class="hidden"><label>Do not fill: <input name="bot-field" /></label></p>
+          <label class="sr-only" for="nl-email">Email address</label>
+          <input id="nl-email" type="email" name="email" required placeholder="you@email.com"
+                 class="w-full rounded-full border border-white/20 bg-white/5 px-5 py-3.5 text-white placeholder-white/40 outline-none focus:border-sand" />
+          <button type="submit" class="rounded-full bg-sand px-7 py-3.5 font-semibold text-ink transition hover:bg-white">Subscribe</button>
+        </form>
+        <p id="newsletter-msg" class="mt-3 text-sm text-sand" role="status"></p>
+      </div>
+
+      <div class="space-y-3 lg:pl-16">
+        <h3 class="text-xl font-semibold text-white">Contact</h3>
+        <p><a class="hover:text-white" href="tel:+16045550123">+1 (604) 555-0123</a></p>
+        <p><a class="hover:text-white" href="mailto:hello@alexmoreno.ca">hello@alexmoreno.ca</a></p>
+        <p>Vancouver, British Columbia</p>
+      </div>
+    </div>
+    <div class="border-t border-white/10 py-6 text-center text-xs text-white/45">© <span id="year"></span> Alex Moreno Real Estate. All rights reserved.</div>
+  </footer>
+
+  <!-- ============ PROPERTY MODAL: details → register → success ============ -->
+  <div id="modal" class="fixed inset-0 z-50 hidden items-end justify-center bg-black/75 sm:items-center sm:p-6" role="dialog" aria-modal="true" aria-label="Property details">
+    <div class="rise max-h-[94vh] w-full overflow-y-auto rounded-t-3xl bg-stone sm:max-w-4xl sm:rounded-3xl">
+      <div class="sticky top-0 z-10 flex justify-end bg-stone/90 p-3 backdrop-blur">
+        <button id="modal-close" type="button" aria-label="Close" class="rounded-full p-2 text-ink/70 hover:bg-ink/10">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+
+      <!-- View 1: details (rendered by JS) -->
+      <div id="view-details" class="px-5 pb-8 sm:px-8"></div>
+
+      <!-- View 2: registration form (Netlify form: open-house-registro) -->
+      <div id="view-form" class="hidden px-5 pb-8 sm:px-8">
+        <button type="button" id="back-to-details" class="mb-4 text-sm text-ink/65 underline hover:text-ink">← Back to property</button>
+        <h2 class="text-2xl font-semibold">Register for Open House</h2>
+        <p id="form-property" class="mt-1 text-sm text-ink/65"></p>
+
+        <form name="open-house-registro" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="oh-form" class="mt-6 max-w-lg space-y-4">
+          <input type="hidden" name="form-name" value="open-house-registro" />
+          <p class="hidden"><label>Do not fill: <input name="bot-field" /></label></p>
+          <input type="hidden" name="property" id="f-property" />
+          <input type="hidden" name="open-house-datetime" id="f-datetime" />
+
+          <label class="block"><span class="mb-1 block text-sm font-medium">Full Name</span>
+            <input type="text" name="full-name" required autocomplete="name" class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-base outline-none focus:border-pine" /></label>
+          <label class="block"><span class="mb-1 block text-sm font-medium">Phone</span>
+            <input type="tel" name="phone" required autocomplete="tel" inputmode="tel" class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-base outline-none focus:border-pine" /></label>
+          <label class="block"><span class="mb-1 block text-sm font-medium">Email</span>
+            <input type="email" name="email" required autocomplete="email" class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-base outline-none focus:border-pine" /></label>
+          <label class="block"><span class="mb-1 block text-sm font-medium">Mortgage Status</span>
+            <select name="mortgage-status" required class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-base outline-none focus:border-pine">
+              <option value="" disabled selected>Select one</option>
+              <option>Pre-approved</option><option>In Progress</option><option>Cash Buyer</option><option>Exploring</option>
+            </select></label>
+          <label class="block"><span class="mb-1 block text-sm font-medium">Interest Type</span>
+            <select name="interest-type" required class="w-full rounded-xl border border-ink/15 bg-white px-4 py-3 text-base outline-none focus:border-pine">
+              <option value="" disabled selected>Select one</option>
+              <option>Buying to Live</option><option>Investment</option><option>Exploring the Market</option><option>Selling and Buying</option>
+            </select></label>
+          <button type="submit" class="w-full rounded-full bg-ink py-4 text-base font-semibold text-white transition hover:bg-pine">Confirm Registration</button>
+          <p id="oh-error" class="hidden text-sm text-red-700" role="alert">We couldn't send your registration. Check your connection and try again.</p>
+        </form>
+      </div>
+
+      <!-- View 3: success -->
+      <div id="view-success" class="hidden px-5 py-16 text-center sm:px-8">
+        <p class="text-2xl font-semibold">You're registered!</p>
+        <p class="mt-2 text-ink/65">We'll email you the visit details shortly.</p>
+        <button type="button" data-close class="mt-6 rounded-full bg-ink px-8 py-3 font-semibold text-white hover:bg-pine">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =====================================================================
+       Properties load from houses.json: { "houses": [ {...}, {...} ] }
+       Fields: id, address, zone, type, price, beds, baths, date, time,
+               image, description, gallery[], plus optional featured, video
+       ===================================================================== */
+    let houses = [];
+
+    /* ----------------------------- Helpers ----------------------------- */
+    const $ = (s) => document.querySelector(s);
+    const money = (n) => new Intl.NumberFormat("en-CA", { style: "currency", currency: "CAD", maximumFractionDigits: 0 }).format(n);
+    const parseDate = (iso) => new Date(iso + "T12:00:00");
+    const fmtDate = (iso) => parseDate(iso).toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    const encodeForm = (form) => new URLSearchParams(new FormData(form)).toString();
+    const today = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; };
+    // Open house is "upcoming" only if it has a date that is today or later
+    const hasOpenHouse = (h) => !!h.date && parseDate(h.date) >= today();
+    const ohLabel = (h) => `${fmtDate(h.date)}${h.time ? ", " + h.time : ""}`;
+
+    // Turns YouTube / Vimeo links into embeddable URLs; other URLs (e.g. Matterport) are used as-is
+    function toEmbed(url) {
+      if (!url) return "";
+      let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]{11})/);
+      if (m) return "https://www.youtube.com/embed/" + m[1];
+      m = url.match(/vimeo\.com\/(\d+)/);
+      if (m) return "https://player.vimeo.com/video/" + m[1];
+      return url;
+    }
+
+    /* ------------------------ Load data (fetch) ------------------------ */
+    async function loadHouses() {
+      try {
+        const res = await fetch("houses.json", { cache: "no-store" });
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        houses = (data.houses || []).map((h, i) => ({ ...h, id: h.id ?? i }));
+        [...new Set(houses.map((h) => h.zone).filter(Boolean))].sort().forEach((z) =>
+          $("#f-zone").insertAdjacentHTML("beforeend", `<option>${esc(z)}</option>`));
+        renderAll();
+      } catch (err) {
+        console.error(err);
+        $("#oh-grid").innerHTML = `<p class="col-span-full rounded-2xl bg-white p-8 text-ink/70">We couldn't load the listings. Please refresh the page. (fetch() doesn't work when the file is opened directly; use Netlify or a local web server.)</p>`;
+      }
+    }
+
+    /* ----------------------------- Cards ----------------------------- */
+    function card(h) {
+      return `
+      <article class="group flex cursor-pointer flex-col overflow-hidden rounded-2xl bg-stone shadow-sm ring-1 ring-ink/5" data-open="${esc(h.id)}">
+        <div class="relative aspect-[4/3] bg-ink/10">
+          <img src="${esc(h.image)}" alt="${esc(h.address)}" loading="lazy" class="h-full w-full object-cover" onerror="this.style.display='none'" />
+          <span class="absolute left-4 top-4 rounded-full bg-ink px-3 py-1 text-xs text-white">${esc(h.type)}</span>
+        </div>
+        <div class="flex flex-1 flex-col p-6">
+          <p class="text-2xl font-semibold">${money(h.price)}</p>
+          <h3 class="mt-1 font-medium">${esc(h.address)}</h3>
+          <p class="text-sm text-ink/60">${esc(h.zone)}, ${esc(h.beds)} bed, ${esc(h.baths)} bath</p>
+          ${hasOpenHouse(h) ? `<p class="mt-4 border-t border-ink/10 pt-4 text-sm"><span class="font-medium">${esc(fmtDate(h.date))}</span><br><span class="text-ink/60">${esc(h.time)}</span></p>` : ""}
+          <button type="button" data-open="${esc(h.id)}" class="mt-6 w-full rounded-full bg-pine py-3.5 font-semibold text-white transition group-hover:bg-ink">View Details</button>
+        </div>
+      </article>`;
+    }
+
+    function renderAll() {
+      const zone = $("#f-zone").value, type = $("#f-type").value, max = Number($("#f-price").value) || Infinity;
+      const list = houses
+        .filter(hasOpenHouse)
+        .filter((h) => (!zone || h.zone === zone) && (!type || h.type === type) && h.price <= max)
+        .sort((a, b) => parseDate(a.date) - parseDate(b.date));
+
+      $("#results-count").textContent = list.length ? `${list.length} ${list.length === 1 ? "property" : "properties"}` : "";
+      $("#oh-grid").innerHTML = list.length
+        ? list.map(card).join("")
+        : `<p class="col-span-full rounded-2xl bg-white p-10 text-center text-ink/65">No open houses match those filters. Try another area or a higher price.</p>`;
+
+      const featured = houses.filter((h) => h.featured);
+      $("#featured").classList.toggle("hidden", !featured.length);
+      $("#featured-grid").innerHTML = featured.map(card).join("");
+    }
+
+    /* ----------------------------- Modal ----------------------------- */
+    const modal = $("#modal");
+    let current = null, lastFocus = null;
+    const showView = (name) => ["details", "form", "success"].forEach((v) => $("#view-" + v).classList.toggle("hidden", v !== name));
+
+    function renderDetails(h) {
+      const imgs = [...new Set([h.image, ...(h.gallery || [])].filter(Boolean))];
+      const embed = toEmbed(h.video);
+      const open = hasOpenHouse(h);
+      $("#view-details").innerHTML = `
+        <div class="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
+          <div>
+            <div class="aspect-[4/3] overflow-hidden rounded-2xl bg-ink/10">
+              <img id="gallery-main" src="${esc(imgs[0])}" alt="${esc(h.address)}" class="h-full w-full object-cover" onerror="this.style.display='none'" />
+            </div>
+            ${imgs.length > 1 ? `<div class="mt-3 grid grid-cols-4 gap-2">${imgs.map((src, i) => `
+              <button type="button" data-thumb="${esc(src)}" aria-label="Show photo ${i + 1}" class="aspect-[4/3] overflow-hidden rounded-lg bg-ink/10 ring-1 ring-ink/10 hover:ring-pine">
+                <img src="${esc(src)}" alt="" loading="lazy" class="h-full w-full object-cover" onerror="this.style.display='none'" /></button>`).join("")}</div>` : ""}
+            ${embed
+              ? `<div class="mt-6"><h3 class="mb-2 font-semibold">Video / Virtual Tour</h3>
+                  <div class="aspect-video overflow-hidden rounded-2xl bg-ink">
+                    <iframe src="${esc(embed)}" title="Video tour of ${esc(h.address)}" class="h-full w-full" allow="fullscreen; picture-in-picture; xr-spatial-tracking" allowfullscreen loading="lazy"></iframe>
+                  </div></div>`
+              : `<div class="mt-6 flex aspect-video items-center justify-center rounded-2xl bg-ink/90 px-6 text-center text-sm text-white/70">Video tour coming soon. Ask us about a private virtual walkthrough.</div>`}
+          </div>
+
+          <div>
+            <p class="text-sm text-ink/60">${esc(h.zone)} · ${esc(h.type)}</p>
+            <h2 class="mt-1 text-2xl font-semibold">${esc(h.address)}</h2>
+            <p class="mt-2 text-3xl font-semibold">${money(h.price)}</p>
+            <p class="mt-3 text-ink/70">${esc(h.beds)} bedrooms · ${esc(h.baths)} bathrooms</p>
+
+            ${open ? `<div class="mt-6 rounded-2xl bg-white p-5">
+              <p class="text-sm text-ink/60">Open House</p>
+              <p class="font-semibold">${esc(fmtDate(h.date))}</p>
+              <p class="text-ink/70">${esc(h.time)}</p></div>` : ""}
+
+            <p class="mt-6 whitespace-pre-line leading-relaxed text-ink/80">${esc(h.description)}</p>
+
+            ${open
+              ? `<button type="button" id="register-btn" class="mt-8 w-full rounded-full bg-pine py-4 text-base font-semibold text-white transition hover:bg-ink">Register for Open House</button>`
+              : `<a href="#contact" data-close class="mt-8 block w-full rounded-full bg-ink py-4 text-center text-base font-semibold text-white transition hover:bg-pine">Request a Private Showing</a>`}
+          </div>
+        </div>`;
+    }
+
+    function openModal(id) {
+      current = houses.find((h) => String(h.id) === String(id));
+      if (!current) return;
+      lastFocus = document.activeElement;
+      renderDetails(current);
+      showView("details");
+      modal.classList.remove("hidden"); modal.classList.add("flex");
+      document.body.classList.add("modal-open");
+      modal.firstElementChild.scrollTop = 0;
+      $("#modal-close").focus();
+    }
+    function closeModal() {
+      modal.classList.add("hidden"); modal.classList.remove("flex");
+      document.body.classList.remove("modal-open");
+      if (lastFocus) lastFocus.focus();
+    }
+
+    document.addEventListener("click", (e) => {
+      const trigger = e.target.closest("[data-open]");
+      if (trigger) return openModal(trigger.dataset.open);
+
+      const thumb = e.target.closest("[data-thumb]");
+      if (thumb) { $("#gallery-main").src = thumb.dataset.thumb; return; }
+
+      if (e.target.closest("#register-btn")) {
+        const form = $("#oh-form");
+        form.reset();
+        $("#f-property").value = current.address;
+        $("#f-datetime").value = ohLabel(current);
+        $("#form-property").textContent = `${current.address} · ${ohLabel(current)}`;
+        $("#oh-error").classList.add("hidden");
+        showView("form");
+        modal.firstElementChild.scrollTop = 0;
+        form.querySelector("input[name=full-name]").focus();
+        return;
+      }
+      if (e.target.closest("#back-to-details")) return showView("details");
+      if (e.target === modal || e.target.closest("[data-close]") || e.target.closest("#modal-close")) closeModal();
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal(); });
+
+    /* --------------------------- Filters --------------------------- */
+    $("#search-form").addEventListener("submit", (e) => { e.preventDefault(); renderAll(); $("#open-houses").scrollIntoView(); });
+    ["#f-zone", "#f-type", "#f-price"].forEach((id) => $(id).addEventListener("change", renderAll));
+
+    /* ------------------- Netlify Forms (AJAX submit) ------------------- */
+    async function postToNetlify(form) {
+      const res = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: encodeForm(form) });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+    }
+
+    $("#oh-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target, btn = form.querySelector("button[type=submit]");
+      btn.disabled = true; btn.textContent = "Sending…";
+      try { await postToNetlify(form); showView("success"); }
+      catch (err) { $("#oh-error").classList.remove("hidden"); }
+      finally { btn.disabled = false; btn.textContent = "Confirm Registration"; }
+    });
+
+    $("#newsletter-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target, msg = $("#newsletter-msg");
+      try { await postToNetlify(form); form.reset(); msg.textContent = "You're in. Alerts arrive every Friday."; }
+      catch (err) { msg.textContent = "We couldn't subscribe you. Please try again."; }
+    });
+
+    /* Netlify Identity: send invited users to the CMS after login */
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", (user) => {
+        if (!user) window.netlifyIdentity.on("login", () => { document.location.href = "/admin/"; });
+      });
+    }
+
+    /* ------------------------------ Init ------------------------------ */
+    $("#year").textContent = new Date().getFullYear();
+    loadHouses();
+  </script>
+</body>
+</html>

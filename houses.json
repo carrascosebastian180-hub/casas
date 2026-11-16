@@ -1,0 +1,116 @@
+{
+  "houses": [
+    {
+      "id": "oh-001",
+      "address": "1845 Pendrell St, Unit 1204",
+      "zone": "West End",
+      "type": "Condo",
+      "price": 1189000,
+      "beds": 2,
+      "baths": 2,
+      "featured": true,
+      "date": "2026-11-21",
+      "time": "2:00 PM – 4:00 PM",
+      "image": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=1400&q=80",
+      "description": "Corner suite on the 12th floor with floor-to-ceiling windows and sweeping views of English Bay. Open-plan living, a chef's kitchen with quartz counters, and a private balcony made for sunsets.\n\nSteps to Denman Street, Stanley Park and the seawall. Includes one parking stall and storage locker.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    },
+    {
+      "id": "oh-002",
+      "address": "3367 W 29th Ave",
+      "zone": "Dunbar",
+      "type": "Home",
+      "price": 3295000,
+      "beds": 5,
+      "baths": 4,
+      "featured": true,
+      "date": "2026-11-22",
+      "time": "1:00 PM – 3:00 PM",
+      "image": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1400&q=80",
+      "description": "A beautifully renovated family home on a quiet, tree-lined Dunbar street. Vaulted ceilings, a gourmet kitchen that opens to a landscaped south-facing yard, and a legal basement suite.\n\nWalking distance to top-rated schools, Pacific Spirit Park and Dunbar Village shops.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    },
+    {
+      "id": "oh-003",
+      "address": "2490 Ash St",
+      "zone": "Fairview",
+      "type": "Townhouse",
+      "price": 1749000,
+      "beds": 3,
+      "baths": 3,
+      "featured": false,
+      "date": "2026-11-22",
+      "time": "2:00 PM – 4:00 PM",
+      "image": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1400&q=80",
+      "description": "Modern three-level townhouse in the heart of Fairview with a rooftop terrace, double garage and bright, open living spaces. Minutes to Granville Island, the Canada Line and the False Creek seawall.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    },
+    {
+      "id": "oh-004",
+      "address": "4128 Cambie St",
+      "zone": "Cambie",
+      "type": "Home",
+      "price": 2398000,
+      "beds": 4,
+      "baths": 3,
+      "featured": false,
+      "date": "2026-11-28",
+      "time": "12:00 PM – 2:00 PM",
+      "image": "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1400&q=80",
+      "description": "Character meets contemporary in this thoughtfully updated Cambie home. Hardwood floors throughout, a sun-filled main floor, and a detached laneway garage. Close to Queen Elizabeth Park and the Canada Line.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    },
+    {
+      "id": "oh-005",
+      "address": "988 Quayside Dr, Unit 801",
+      "zone": "New Westminster",
+      "type": "Condo",
+      "price": 849000,
+      "beds": 1,
+      "baths": 1,
+      "featured": false,
+      "date": "2026-12-05",
+      "time": "1:00 PM – 3:00 PM",
+      "image": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1400&q=80",
+      "description": "Bright one-bedroom on the Fraser River with a spacious balcony, in-suite laundry and a building with concierge and fitness centre. A short stroll to the Quay boardwalk, restaurants and SkyTrain.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    },
+    {
+      "id": "oh-006",
+      "address": "1520 Chesterfield Ave",
+      "zone": "North Vancouver",
+      "type": "Home",
+      "price": 2890000,
+      "beds": 4,
+      "baths": 4,
+      "featured": true,
+      "date": "",
+      "time": "",
+      "image": "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=80",
+      "description": "Architect-designed North Shore home with expansive glass, a cedar-clad exterior and a private backyard backing onto green space. Radiant heating, a media room and a three-minute drive to Lonsdale Quay.\n\nPrivate showings available by appointment.",
+      "gallery": [
+        "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=80",
+        "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=80"
+      ],
+      "video": ""
+    }
+  ]
+}
